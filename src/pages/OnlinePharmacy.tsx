@@ -244,7 +244,7 @@ const OnlinePharmacy = () => {
                       />
                     </div>
                     <div className="p-5 md:p-6">
-                      <div className="text-3xl font-bold text-teal-primary mb-3">01</div>
+                      <div className="text-3xl font-bold text-primary mb-3">01</div>
                       <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2 md:mb-3">Upload prescription</h3>
                       <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                         Create an account and securely upload your valid medical cannabis prescription from your healthcare provider.
@@ -263,7 +263,7 @@ const OnlinePharmacy = () => {
                       />
                     </div>
                     <div className="p-5 md:p-6">
-                      <div className="text-3xl font-bold text-teal-primary mb-3">02</div>
+                      <div className="text-3xl font-bold text-primary mb-3">02</div>
                       <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2 md:mb-3">Pharmacist review</h3>
                       <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                         Our qualified pharmacists verify your prescription and prepare your order with care and precision.
@@ -282,7 +282,7 @@ const OnlinePharmacy = () => {
                       />
                     </div>
                     <div className="p-5 md:p-6">
-                      <div className="text-3xl font-bold text-teal-primary mb-3">03</div>
+                      <div className="text-3xl font-bold text-primary mb-3">03</div>
                       <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2 md:mb-3">Secure delivery</h3>
                       <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                         Receive your medication in discreet packaging with tracked delivery, ensuring safe arrival at your doorstep.

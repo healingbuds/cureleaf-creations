@@ -57,28 +57,28 @@ const Research = () => {
                 
                 <div className="grid md:grid-cols-2 gap-6 mb-16">
                 <div className="card-linear p-7 hover-lift">
-                  <Microscope className="w-10 h-10 text-teal-primary mb-4" />
+                  <Microscope className="w-10 h-10 text-primary mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-3 tracking-tight">Clinical Trials</h3>
                   <p className="text-muted-foreground/80 leading-relaxed text-sm">
                     We conduct rigorous clinical trials examining the efficacy and safety of cannabis-based medicines for various medical conditions.
                   </p>
                 </div>
                 <div className="card-linear p-7 hover-lift">
-                  <FileText className="w-10 h-10 text-teal-primary mb-4" />
+                  <FileText className="w-10 h-10 text-primary mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-3 tracking-tight">Publications</h3>
                   <p className="text-muted-foreground/80 leading-relaxed text-sm">
                     Our research team publishes findings in peer-reviewed journals, contributing to the global understanding of cannabis medicine.
                   </p>
                 </div>
                 <div className="card-linear p-7 hover-lift">
-                  <Award className="w-10 h-10 text-teal-primary mb-4" />
+                  <Award className="w-10 h-10 text-primary mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-3 tracking-tight">Recognition</h3>
                   <p className="text-muted-foreground/80 leading-relaxed text-sm">
                     Our work has been recognized with multiple awards for contributions to cannabis science and medical innovation.
                   </p>
                 </div>
                 <div className="card-linear p-7 hover-lift">
-                  <Users className="w-10 h-10 text-teal-primary mb-4" />
+                  <Users className="w-10 h-10 text-primary mb-4" />
                   <h3 className="text-xl font-semibold text-foreground mb-3 tracking-tight">Collaboration</h3>
                   <p className="text-muted-foreground/80 leading-relaxed text-sm">
                     We partner with leading universities and research institutions worldwide to accelerate cannabis research.

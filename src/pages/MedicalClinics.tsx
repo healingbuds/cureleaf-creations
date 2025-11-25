@@ -68,7 +68,7 @@ const MedicalClinics = () => {
           </section>
 
           {/* Our Services Section */}
-          <section className="py-20 md:py-32" style={{ background: 'linear-gradient(135deg, hsl(var(--teal-primary)), hsl(var(--teal-darker)))' }}>
+          <section className="py-20 md:py-32" style={{ backgroundColor: 'hsl(var(--section-color))' }}>
             <div className="container mx-auto px-3 sm:px-4 lg:px-6">
               <ScrollAnimation>
                 <div className="flex justify-between items-center mb-12 max-w-6xl mx-auto">
@@ -236,10 +236,10 @@ const MedicalClinics = () => {
                       Explore our network of clinics across South Africa, the UK, Thailand, and Portugal. Find expert cannabis care near you.
                     </p>
                     <div className="flex flex-wrap gap-3">
-                      <button className="btn-linear bg-teal-primary hover:bg-teal-primary/90 text-white px-6 py-2.5">
+                      <button className="btn-primary px-6 py-2.5">
                         Contact us →
                       </button>
-                      <button className="btn-linear border border-border/60 hover:border-foreground/20 text-foreground px-6 py-2.5">
+                      <button className="btn-outline px-6 py-2.5">
                         Find a clinic →
                       </button>
                     </div>

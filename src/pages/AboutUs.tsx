@@ -70,7 +70,7 @@ const AboutUs = () => {
             </h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 max-w-6xl mx-auto">
               <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-teal-primary to-teal-deeper rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
                   <Target className="w-8 h-8 text-white" strokeWidth={2} />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-3 tracking-tight">Excellence</h3>
@@ -79,7 +79,7 @@ const AboutUs = () => {
                 </p>
               </div>
               <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-teal-primary to-teal-deeper rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
                   <Heart className="w-8 h-8 text-white" strokeWidth={2} />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-3 tracking-tight">Patient-Focused</h3>
@@ -88,7 +88,7 @@ const AboutUs = () => {
                 </p>
               </div>
               <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-teal-primary to-teal-deeper rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
                   <Globe className="w-8 h-8 text-white" strokeWidth={2} />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-3 tracking-tight">Global Reach</h3>
@@ -97,7 +97,7 @@ const AboutUs = () => {
                 </p>
               </div>
               <div className="text-center group">
-                <div className="w-16 h-16 bg-gradient-to-br from-teal-primary to-teal-deeper rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
                   <Shield className="w-8 h-8 text-white" strokeWidth={2} />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-3 tracking-tight">Integrity</h3>
@@ -110,7 +110,7 @@ const AboutUs = () => {
         </section>
 
         {/* Our Facilities - Linear style */}
-        <section className="py-20 md:py-32 bg-teal-primary">
+        <section className="py-20 md:py-32" style={{ backgroundColor: 'hsl(var(--section-color))' }}>
           <div className="container mx-auto px-3 sm:px-4 lg:px-6">
             <div className="max-w-4xl mx-auto text-center">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold text-white mb-8 tracking-tight">
@@ -159,7 +159,7 @@ const AboutUs = () => {
               Whether you're a patient, healthcare provider, or potential partner across our South African, UK, Thai, or Portuguese markets, we'd love to hear from you.
             </p>
             <Link to="/contact">
-              <button className="btn-linear bg-teal-primary hover:bg-teal-primary/90 text-white px-7 py-3">
+              <button className="btn-primary px-7 py-3">
                 Get in touch →
               </button>
             </Link>

@@ -76,7 +76,7 @@ const ManufactureDistribution = () => {
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                   <ScrollAnimation delay={0.1}>
                     <div className="card-linear p-7 hover-lift group">
-                      <div className="w-16 h-16 bg-gradient-to-br from-teal-primary to-teal-deeper rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-110">
+                      <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-110">
                         <Factory className="w-8 h-8 text-white" strokeWidth={2} />
                       </div>
                       <h3 className="text-xl font-semibold text-foreground mb-3">GMP Certified</h3>
@@ -88,7 +88,7 @@ const ManufactureDistribution = () => {
 
                   <ScrollAnimation delay={0.2}>
                     <div className="card-linear p-7 hover-lift group">
-                      <div className="w-16 h-16 bg-gradient-to-br from-teal-primary to-teal-deeper rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-110">
+                      <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-110">
                         <Globe className="w-8 h-8 text-white" strokeWidth={2} />
                       </div>
                       <h3 className="text-xl font-semibold text-foreground mb-3">Global Reach</h3>
@@ -100,7 +100,7 @@ const ManufactureDistribution = () => {
 
                   <ScrollAnimation delay={0.3}>
                     <div className="card-linear p-7 hover-lift group">
-                      <div className="w-16 h-16 bg-gradient-to-br from-teal-primary to-teal-deeper rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-110">
+                      <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-110">
                         <Award className="w-8 h-8 text-white" strokeWidth={2} />
                       </div>
                       <h3 className="text-xl font-semibold text-foreground mb-3">Quality Assured</h3>
@@ -112,7 +112,7 @@ const ManufactureDistribution = () => {
 
                   <ScrollAnimation delay={0.4}>
                     <div className="card-linear p-7 hover-lift group">
-                      <div className="w-16 h-16 bg-gradient-to-br from-teal-primary to-teal-deeper rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-110">
+                      <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-110">
                         <Package className="w-8 h-8 text-white" strokeWidth={2} />
                       </div>
                       <h3 className="text-xl font-semibold text-foreground mb-3">Diverse Products</h3>
@@ -127,7 +127,7 @@ const ManufactureDistribution = () => {
           </section>
 
           {/* Why Partner Section */}
-          <section className="py-20 md:py-32" style={{ background: 'linear-gradient(135deg, hsl(var(--teal-primary)), hsl(var(--teal-darker)))' }}>
+          <section className="py-20 md:py-32" style={{ backgroundColor: 'hsl(var(--section-color))' }}>
             <div className="container mx-auto px-3 sm:px-4 lg:px-6">
               <div className="max-w-4xl mx-auto text-center">
                 <h2 className="text-4xl font-semibold text-white mb-8">

@@ -6,7 +6,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer id="contact" className="bg-gradient-to-br from-[#1F2A25] to-[#13303D] text-white">
+    <footer id="contact" className="text-white" style={{ backgroundColor: 'hsl(var(--navbar-teal))' }}>
       <div className="container mx-auto px-3 sm:px-4 lg:px-6">
         {/* Main Footer Content */}
         <div className="py-10 sm:py-12 border-b border-white/10">

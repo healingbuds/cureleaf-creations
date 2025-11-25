@@ -3,9 +3,44 @@ import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import ScrollAnimation from "@/components/ScrollAnimation";
 import BackToTop from "@/components/BackToTop";
-import { Microscope, FileText, Award, Users } from "lucide-react";
+import { Microscope, FileText, Award, Users, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import researchLabImage from "@/assets/research-lab-hq.jpg";
+import conditionAnxiety from "@/assets/condition-anxiety.jpg";
+import conditionChronicPain from "@/assets/condition-chronic-pain.jpg";
+import conditionArthritis from "@/assets/condition-arthritis.jpg";
+import conditionBackPain from "@/assets/condition-back-pain.jpg";
+import conditionCRPS from "@/assets/condition-crps.jpg";
+import conditionEpilepsy from "@/assets/condition-epilepsy.jpg";
+import conditionInsomnia from "@/assets/condition-insomnia.jpg";
+import conditionMigraines from "@/assets/condition-migraines.jpg";
+import conditionMS from "@/assets/condition-ms.jpg";
+import conditionNeuropathicPain from "@/assets/condition-neuropathic-pain.jpg";
+import conditionParkinsons from "@/assets/condition-parkinsons.jpg";
+import conditionPTSD from "@/assets/condition-ptsd.jpg";
+
+const conditionsByCategory = {
+  "Pain Management": [
+    { id: "chronic-pain", name: "Chronic Pain", image: conditionChronicPain },
+    { id: "arthritis", name: "Arthritis", image: conditionArthritis },
+    { id: "back-pain", name: "Back Pain", image: conditionBackPain },
+    { id: "complex-regional-pain-syndrome", name: "Complex Regional Pain Syndrome", image: conditionCRPS },
+    { id: "migraines", name: "Migraines", image: conditionMigraines },
+    { id: "neuropathic-pain", name: "Neuropathic Pain", image: conditionNeuropathicPain },
+  ],
+  "Mental Health": [
+    { id: "anxiety", name: "Anxiety", image: conditionAnxiety },
+    { id: "ptsd", name: "PTSD", image: conditionPTSD },
+  ],
+  "Neurological": [
+    { id: "epilepsy", name: "Epilepsy", image: conditionEpilepsy },
+    { id: "multiple-sclerosis", name: "Multiple Sclerosis", image: conditionMS },
+    { id: "parkinsons-disease", name: "Parkinson's Disease", image: conditionParkinsons },
+  ],
+  "Sleep Disorders": [
+    { id: "insomnia", name: "Insomnia", image: conditionInsomnia },
+  ],
+};
 
 const Research = () => {
   return (
@@ -94,29 +129,61 @@ const Research = () => {
         {/* Research Areas - Linear style */}
         <section className="py-20 md:py-32" style={{ backgroundColor: 'hsl(var(--section-color))' }}>
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-4xl md:text-5xl font-semibold text-white text-center mb-16 md:mb-20 tracking-tight">
-              Our Research Focus Areas
-            </h2>
-            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              <div className="bg-white/[0.03] backdrop-blur-sm rounded-xl p-7 border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all duration-200">
-                <h3 className="text-xl md:text-2xl font-medium text-white mb-4 tracking-tight">Pain Management</h3>
-                <p className="text-white/70 leading-relaxed text-sm md:text-base">
-                  Investigating the efficacy of cannabinoids in treating chronic pain conditions and developing evidence-based treatment protocols.
-                </p>
-              </div>
-              <div className="bg-white/[0.03] backdrop-blur-sm rounded-xl p-7 border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all duration-200">
-                <h3 className="text-xl md:text-2xl font-medium text-white mb-4 tracking-tight">Neurological Disorders</h3>
-                <p className="text-white/70 leading-relaxed text-sm md:text-base">
-                  Studying the potential of cannabis in treating epilepsy, multiple sclerosis, and other neurological conditions.
-                </p>
-              </div>
-              <div className="bg-white/[0.03] backdrop-blur-sm rounded-xl p-7 border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all duration-200">
-                <h3 className="text-xl md:text-2xl font-medium text-white mb-4 tracking-tight">Mental Health</h3>
-                <p className="text-white/70 leading-relaxed text-sm md:text-base">
-                  Researching the role of cannabinoids in anxiety, PTSD, and other mental health applications.
-                </p>
-              </div>
+            <ScrollAnimation>
+              <h2 className="text-4xl md:text-5xl font-semibold text-white text-center mb-6 tracking-tight">
+                Our Research Focus Areas
+              </h2>
+              <p className="text-lg text-white/70 text-center max-w-3xl mx-auto mb-16 md:mb-20">
+                Exploring medical cannabis applications across key therapeutic areas
+              </p>
+            </ScrollAnimation>
+            
+            <div className="space-y-20">
+              {Object.entries(conditionsByCategory).map(([category, conditions]) => (
+                <div key={category}>
+                  <ScrollAnimation>
+                    <h3 className="text-2xl md:text-3xl font-semibold text-white mb-8 tracking-tight">
+                      {category}
+                    </h3>
+                  </ScrollAnimation>
+                  
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {conditions.map((condition) => (
+                      <ScrollAnimation key={condition.id}>
+                        <Link
+                          to={`/conditions/${condition.id}`}
+                          className="group block bg-white/[0.03] backdrop-blur-sm rounded-xl overflow-hidden border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
+                        >
+                          <div className="h-40 overflow-hidden bg-gradient-to-br from-white/5 to-white/[0.02]">
+                            <img
+                              src={condition.image}
+                              alt={condition.name}
+                              className="w-full h-full object-contain p-6 group-hover:scale-105 transition-transform duration-500"
+                            />
+                          </div>
+                          <div className="p-5 flex items-center justify-between">
+                            <h4 className="text-lg font-medium text-white group-hover:text-primary transition-colors">
+                              {condition.name}
+                            </h4>
+                            <ArrowRight className="w-5 h-5 text-white/50 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                          </div>
+                        </Link>
+                      </ScrollAnimation>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
+
+            <ScrollAnimation>
+              <div className="mt-16 text-center">
+                <Link to="/conditions">
+                  <button className="btn-linear text-white border border-white/30 hover:bg-white/10 px-8 py-3 text-lg">
+                    View All Eligible Conditions →
+                  </button>
+                </Link>
+              </div>
+            </ScrollAnimation>
           </div>
         </section>
 

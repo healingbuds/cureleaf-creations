@@ -18,6 +18,7 @@ import MedicalClinics from "./pages/MedicalClinics";
 import OnlinePharmacy from "./pages/OnlinePharmacy";
 import Research from "./pages/Research";
 import AboutUs from "./pages/AboutUs";
+import BlockchainTechnology from "./pages/BlockchainTechnology";
 import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -43,6 +44,7 @@ const AnimatedRoutes = () => {
         <Route path="/online-pharmacy" element={<OnlinePharmacy />} />
         <Route path="/research" element={<Research />} />
         <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/blockchain-technology" element={<BlockchainTechnology />} />
         <Route path="/the-wire" element={<TheWire />} />
         <Route path="/the-wire/:articleId" element={<NewsArticle />} />
         <Route path="/franchise-opportunity" element={<ScottFranchiseStory />} />

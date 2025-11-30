@@ -62,6 +62,8 @@ const Header = () => {
   const isActive = (path: string) => location.pathname === path;
   
   const isWhatWeDoActive = ['/what-we-do', '/cultivating-processing', '/manufacture-distribution', '/medical-clinics', '/online-pharmacy'].includes(location.pathname);
+  const isAboutUsActive = ['/about-us', '/blockchain-technology'].includes(location.pathname);
+  const [aboutUsOpen, setAboutUsOpen] = useState(false);
 
   return (
     <>
@@ -190,19 +192,49 @@ const Header = () => {
             >
               The Wire
             </Link>
-            <Link 
-              to="/about-us"
-              className={cn(
-                "font-body flex items-center gap-1 font-medium transition-all duration-300 ease-out rounded-md hover:scale-105",
-                scrolled ? "text-sm px-2.5 py-1.5" : "text-sm px-3 py-1.5",
-                isActive("/about-us") 
-                  ? "text-white bg-white/10" 
-                  : "text-white/70 hover:text-white hover:bg-white/5"
-              )}
+            <div 
+              className="relative"
+              onMouseEnter={() => setAboutUsOpen(true)}
+              onMouseLeave={() => setAboutUsOpen(false)}
             >
-              About Us
-              <ChevronDown className="w-4 h-4" />
-            </Link>
+              <button 
+                className={cn(
+                  "font-body flex items-center gap-1 font-medium transition-all duration-300 ease-out relative rounded-md hover:scale-105",
+                  scrolled ? "text-sm px-2.5 py-1.5" : "text-sm px-3 py-1.5",
+                  isAboutUsActive
+                    ? "text-white bg-white/10" 
+                    : "text-white/70 hover:text-white hover:bg-white/5"
+                )}
+              >
+                About Us
+                <ChevronDown className={cn("w-4 h-4 transition-transform duration-150", aboutUsOpen && "rotate-180")} />
+              </button>
+              
+              {/* Dropdown Menu */}
+              <div 
+                className={cn(
+                  "absolute top-full left-0 mt-2 w-72 bg-background rounded-xl shadow-card border border-border/40 overflow-hidden transition-all duration-150 z-50",
+                  aboutUsOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-1"
+                )}
+              >
+                <Link
+                  to="/about-us"
+                  className="block px-4 py-3 text-foreground hover:bg-muted transition-colors border-b border-border"
+                  onClick={() => setAboutUsOpen(false)}
+                >
+                  <div className="font-medium">About Healing Buds</div>
+                  <div className="text-sm text-muted-foreground">Our story, values & facilities</div>
+                </Link>
+                <Link
+                  to="/blockchain-technology"
+                  className="block px-4 py-3 text-foreground hover:bg-muted transition-colors"
+                  onClick={() => setAboutUsOpen(false)}
+                >
+                  <div className="font-medium">Blockchain Technology</div>
+                  <div className="text-sm text-muted-foreground">Seed-to-patient traceability</div>
+                </Link>
+              </div>
+            </div>
             <Link 
               to="/contact" 
               className={cn(
@@ -350,16 +382,30 @@ const Header = () => {
             >
               The Wire
             </Link>
-            <Link 
-              to="/about-us"
-              className={cn(
-                "font-normal text-sm transition-all duration-200 py-1.5",
-                isActive("/about-us") ? "text-white font-semibold" : "text-white/80 hover:text-white"
-              )}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              About Us
-            </Link>
+            <div className="space-y-1.5">
+              <div className={cn(
+                "font-normal text-sm py-1.5 font-semibold",
+                isAboutUsActive ? "text-white" : "text-white/80"
+              )}>
+                About Us
+              </div>
+              <div className="pl-3 space-y-1 border-l-2 border-white/20">
+                <Link 
+                  to="/about-us" 
+                  className="block text-xs text-white/80 hover:text-white py-1 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  About Healing Buds
+                </Link>
+                <Link 
+                  to="/blockchain-technology" 
+                  className="block text-xs text-white/80 hover:text-white py-1 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Blockchain Technology
+                </Link>
+              </div>
+            </div>
             <Link 
               to="/contact" 
               className={cn(

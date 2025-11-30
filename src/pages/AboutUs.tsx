@@ -3,7 +3,6 @@ import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import ScrollAnimation from "@/components/ScrollAnimation";
 import BackToTop from "@/components/BackToTop";
-import BlockchainTraceability from "@/components/BlockchainTraceability";
 import StatisticsSection from "@/components/StatisticsSection";
 import { Target, Heart, Globe, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -154,9 +153,6 @@ const AboutUs = () => {
             </div>
           </div>
         </section>
-
-        {/* Blockchain Traceability Timeline */}
-        <BlockchainTraceability />
 
         {/* CTA - Linear style */}
         <section className="py-20 md:py-32 bg-background">

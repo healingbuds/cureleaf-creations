@@ -188,7 +188,7 @@ const InteractiveMap = ({ selectedCountry, onCountrySelect }: InteractiveMapProp
   useEffect(() => {
     if (!mapContainer.current) return;
     
-    // Custom branded style with design system colors - improved visibility
+    // Custom branded style with olive green colors from HB logo
     const style = {
       version: 8,
       sources: {
@@ -205,7 +205,7 @@ const InteractiveMap = ({ selectedCountry, onCountrySelect }: InteractiveMapProp
           id: 'background',
           type: 'background',
           paint: {
-            'background-color': 'hsl(171, 15%, 82%)' // Darker muted background for more contrast
+            'background-color': 'hsl(72, 12%, 85%)' // Warm olive-tinted background
           }
         },
         {
@@ -215,19 +215,19 @@ const InteractiveMap = ({ selectedCountry, onCountrySelect }: InteractiveMapProp
           minzoom: 0,
           maxzoom: 22,
           paint: {
-            'raster-opacity': 0.85, // Higher opacity for better visibility
-            'raster-saturation': -0.15, // Less desaturation for more color
-            'raster-contrast': 0.2, // Higher contrast boost
+            'raster-opacity': 0.85,
+            'raster-saturation': -0.2,
+            'raster-contrast': 0.15,
             'raster-brightness-min': 0.2,
-            'raster-brightness-max': 0.8
+            'raster-brightness-max': 0.85
           }
         },
         {
           id: 'brand-overlay',
           type: 'background',
           paint: {
-            'background-color': 'hsl(178, 48%, 28%)', // Darker green overlay
-            'background-opacity': 0.08
+            'background-color': 'hsl(72, 22%, 46%)', // Olive green overlay
+            'background-opacity': 0.06
           }
         }
       ]
@@ -401,11 +401,11 @@ const InteractiveMap = ({ selectedCountry, onCountrySelect }: InteractiveMapProp
         el.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
         el.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1), 0 0 0 3px white';
         
-        // Design system colors for markers
+        // Olive-based color palette for markers
         const colorMap: Record<LocationType, string> = {
-          'operations-sales': 'hsl(142, 76%, 36%)',   // Primary green
-          'export-only': 'hsl(160, 84%, 39%)',        // Teal accent
-          'operations-only': 'hsl(173, 58%, 39%)',    // Secondary teal
+          'operations-sales': '#7A8266',   // Primary olive green
+          'export-only': '#97A275',        // Light olive/sage
+          'operations-only': '#666E54',    // Dark olive
         };
         
         el.style.backgroundColor = colorMap[location.type];
@@ -428,24 +428,24 @@ const InteractiveMap = ({ selectedCountry, onCountrySelect }: InteractiveMapProp
           closeOnClick: false,
         })
           .setHTML(`
-            <div style="padding: 10px 14px; font-family: 'Inter', system-ui, -apple-system, sans-serif; background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(12px); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15), 0 0 0 1px rgba(77, 191, 161, 0.15); border: 1px solid rgba(77, 191, 161, 0.2);">
+            <div style="padding: 10px 14px; font-family: 'Inter', system-ui, -apple-system, sans-serif; background: rgba(255, 255, 255, 0.97); backdrop-filter: blur(12px); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.15), 0 0 0 1px rgba(122, 130, 102, 0.2); border: 1px solid rgba(122, 130, 102, 0.25);">
               <div style="font-weight: 700; font-size: 13px; margin-bottom: 4px; color: ${colorMap[location.type]}; letter-spacing: -0.2px;">${location.name}</div>
-              <div style="font-size: 11px; color: hsl(176, 39%, 30%); margin-bottom: 6px;">${countryData.name}</div>
+              <div style="font-size: 11px; color: #666E54; margin-bottom: 6px;">${countryData.name}</div>
               ${location.cultivationArea ? `
                 <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 4px;">
-                  <span style="color: hsl(176, 39%, 45%);">Area:</span>
-                  <span style="color: hsl(176, 39%, 20%); font-weight: 600;">${location.cultivationArea}</span>
+                  <span style="color: #97A275;">Area:</span>
+                  <span style="color: #3A3E30; font-weight: 600;">${location.cultivationArea}</span>
                 </div>
               ` : ''}
               ${location.productionCapacity ? `
                 <div style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 4px;">
-                  <span style="color: hsl(176, 39%, 45%);">Capacity:</span>
-                  <span style="color: hsl(176, 39%, 20%); font-weight: 600;">${location.productionCapacity}</span>
+                  <span style="color: #97A275;">Capacity:</span>
+                  <span style="color: #3A3E30; font-weight: 600;">${location.productionCapacity}</span>
                 </div>
               ` : ''}
               ${location.certifications && location.certifications.length > 0 ? `
-                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(77, 191, 161, 0.15);">
-                  <div style="font-size: 9px; color: hsl(176, 39%, 45%); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Certifications</div>
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(122, 130, 102, 0.2);">
+                  <div style="font-size: 9px; color: #97A275; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Certifications</div>
                   <div style="display: flex; flex-wrap: wrap; gap: 4px;">
                     ${location.certifications.slice(0, 3).map(cert => 
                       `<span style="display: inline-block; background: ${colorMap[location.type]}; color: white; padding: 3px 8px; border-radius: 5px; font-size: 9px; font-weight: 600;">${cert}</span>`
@@ -504,13 +504,13 @@ const InteractiveMap = ({ selectedCountry, onCountrySelect }: InteractiveMapProp
                     </svg>
                   </div>
                   <div>
-                    <h3 style="font-size: 20px; font-weight: 700; color: hsl(240, 10%, 3.9%); margin: 0; line-height: 1.2;">${location.name}</h3>
-                    <p style="font-size: 13px; color: hsl(240, 3.8%, 46.1%); margin: 4px 0 0 0;">${countryData.name}</p>
+                    <h3 style="font-size: 20px; font-weight: 700; color: #3A3E30; margin: 0; line-height: 1.2;">${location.name}</h3>
+                    <p style="font-size: 13px; color: #97A275; margin: 4px 0 0 0;">${countryData.name}</p>
                   </div>
                 </div>
 
-                <div style="background: hsl(240, 4.8%, 95.9%); padding: 12px; border-radius: 10px; margin-bottom: 16px;">
-                  <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: hsl(240, 3.8%, 46.1%); font-weight: 600; margin-bottom: 6px;">Facility Type</div>
+                <div style="background: #F5F6F2; padding: 12px; border-radius: 10px; margin-bottom: 16px;">
+                  <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #97A275; font-weight: 600; margin-bottom: 6px;">Facility Type</div>
                   <div style="font-size: 13px; font-weight: 600; color: ${colorMap[location.type]};">${typeLabels[location.type]}</div>
                 </div>
 
@@ -518,14 +518,14 @@ const InteractiveMap = ({ selectedCountry, onCountrySelect }: InteractiveMapProp
                   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
                     ${location.cultivationArea ? `
                       <div>
-                        <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: hsl(240, 3.8%, 46.1%); font-weight: 600; margin-bottom: 4px;">Cultivation Area</div>
-                        <div style="font-size: 16px; font-weight: 700; color: hsl(240, 10%, 3.9%);">${location.cultivationArea}</div>
+                        <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #97A275; font-weight: 600; margin-bottom: 4px;">Cultivation Area</div>
+                        <div style="font-size: 16px; font-weight: 700; color: #3A3E30;">${location.cultivationArea}</div>
                       </div>
                     ` : ''}
                     ${location.productionCapacity ? `
                       <div>
-                        <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: hsl(240, 3.8%, 46.1%); font-weight: 600; margin-bottom: 4px;">Production Capacity</div>
-                        <div style="font-size: 16px; font-weight: 700; color: hsl(240, 10%, 3.9%);">${location.productionCapacity}</div>
+                        <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #97A275; font-weight: 600; margin-bottom: 4px;">Production Capacity</div>
+                        <div style="font-size: 16px; font-weight: 700; color: #3A3E30;">${location.productionCapacity}</div>
                       </div>
                     ` : ''}
                   </div>
@@ -533,19 +533,19 @@ const InteractiveMap = ({ selectedCountry, onCountrySelect }: InteractiveMapProp
 
                 ${location.certifications && location.certifications.length > 0 ? `
                   <div style="margin-bottom: 16px;">
-                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: hsl(240, 3.8%, 46.1%); font-weight: 600; margin-bottom: 8px;">Certifications</div>
+                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #97A275; font-weight: 600; margin-bottom: 8px;">Certifications</div>
                     <div style="display: flex; flex-wrap: wrap; gap: 6px;">
                       ${location.certifications.map(cert => 
-                        `<span style="display: inline-flex; background: linear-gradient(135deg, hsl(142, 76%, 96%), hsl(142, 76%, 92%)); color: hsl(142, 76%, 36%); padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; border: 1.5px solid hsl(142, 76%, 88%); box-shadow: 0 2px 4px rgba(0,0,0,0.05);">${cert}</span>`
+                        `<span style="display: inline-flex; background: linear-gradient(135deg, #F5F6F2, #E8EAE0); color: #7A8266; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; border: 1.5px solid #D4D8C8; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">${cert}</span>`
                       ).join('')}
                     </div>
                   </div>
                 ` : ''}
 
                 ${location.licensedPartner ? `
-                  <div style="padding-top: 16px; border-top: 1px solid hsl(240, 4.8%, 95.9%);">
-                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: hsl(240, 3.8%, 46.1%); font-weight: 600; margin-bottom: 4px;">Licensed Partner</div>
-                    <div style="font-size: 12px; color: hsl(240, 10%, 3.9%); font-weight: 500; line-height: 1.5;">${location.licensedPartner}</div>
+                  <div style="padding-top: 16px; border-top: 1px solid #E8EAE0;">
+                    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #97A275; font-weight: 600; margin-bottom: 4px;">Licensed Partner</div>
+                    <div style="font-size: 12px; color: #3A3E30; font-weight: 500; line-height: 1.5;">${location.licensedPartner}</div>
                   </div>
                 ` : ''}
               </div>
@@ -578,9 +578,9 @@ const InteractiveMap = ({ selectedCountry, onCountrySelect }: InteractiveMapProp
 
         const certificationsHtml = location.certifications && location.certifications.length > 0
           ? location.certifications.map(cert => 
-              `<span style="display: inline-block; background: hsl(142, 76%, 96%); color: hsl(142, 76%, 36%); padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 600; border: 1px solid hsl(142, 76%, 88%); margin-right: 4px; margin-bottom: 4px;">${cert}</span>`
+              `<span style="display: inline-block; background: #F5F6F2; color: #7A8266; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 600; border: 1px solid #D4D8C8; margin-right: 4px; margin-bottom: 4px;">${cert}</span>`
             ).join('')
-          : '<span style="font-size: 12px; color: hsl(215, 16%, 47%); font-style: italic;">None specified</span>';
+          : '<span style="font-size: 12px; color: #97A275; font-style: italic;">None specified</span>';
 
         const isMobile = window.innerWidth < 640;
         const popup = new maplibregl.Popup({ 
@@ -593,63 +593,63 @@ const InteractiveMap = ({ selectedCountry, onCountrySelect }: InteractiveMapProp
           .setHTML(`
             <div style="padding: ${isMobile ? '14px 16px' : '20px 22px'}; font-family: 'Inter', system-ui, -apple-system, sans-serif; background: hsl(0, 0%, 100%); border-radius: ${isMobile ? '12px' : '16px'}; box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 1px rgba(0,0,0,0.1);">
               <!-- Licensed Partner Badge -->
-              <div style="display: inline-flex; align-items: center; gap: ${isMobile ? '4px' : '6px'}; font-size: ${isMobile ? '8px' : '9px'}; color: hsl(160, 84%, 39%); background: hsl(160, 84%, 96%); padding: ${isMobile ? '3px 8px' : '4px 10px'}; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; margin-bottom: ${isMobile ? '8px' : '10px'}; border: 1px solid hsl(160, 84%, 88%);">
+              <div style="display: inline-flex; align-items: center; gap: ${isMobile ? '4px' : '6px'}; font-size: ${isMobile ? '8px' : '9px'}; color: #7A8266; background: #F5F6F2; padding: ${isMobile ? '3px 8px' : '4px 10px'}; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; margin-bottom: ${isMobile ? '8px' : '10px'}; border: 1px solid #D4D8C8;">
                 <svg width="${isMobile ? '8' : '10'}" height="${isMobile ? '8' : '10'}" viewBox="0 0 10 10" fill="none" style="flex-shrink: 0;">
-                  <path d="M5 0L6.12257 3.45492H9.75528L6.81636 5.59017L7.93893 9.04508L5 6.90983L2.06107 9.04508L3.18364 5.59017L0.244718 3.45492H3.87743L5 0Z" fill="hsl(160, 84%, 39%)"/>
+                  <path d="M5 0L6.12257 3.45492H9.75528L6.81636 5.59017L7.93893 9.04508L5 6.90983L2.06107 9.04508L3.18364 5.59017L0.244718 3.45492H3.87743L5 0Z" fill="#7A8266"/>
                 </svg>
                 Licensed Partner
               </div>
               
-              <div style="font-weight: 700; font-size: ${isMobile ? '15px' : '18px'}; margin-bottom: ${isMobile ? '4px' : '6px'}; color: hsl(142, 76%, 36%); letter-spacing: -0.4px; line-height: 1.2;">${countryData.name}</div>
-              <div style="font-size: ${isMobile ? '13px' : '15px'}; color: hsl(215, 16%, 47%); margin-bottom: ${isMobile ? '10px' : '14px'}; font-weight: 500;">${location.name}</div>
-              <div style="display: inline-flex; align-items: center; gap: ${isMobile ? '4px' : '6px'}; font-size: ${isMobile ? '9px' : '11px'}; color: hsl(142, 76%, 36%); background: hsl(142, 76%, 96%); padding: ${isMobile ? '4px 10px' : '6px 12px'}; border-radius: ${isMobile ? '6px' : '8px'}; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; margin-bottom: ${isMobile ? '10px' : '14px'}; border: 1px solid hsl(142, 76%, 88%);">
-                <div style="width: ${isMobile ? '5px' : '6px'}; height: ${isMobile ? '5px' : '6px'}; border-radius: 50%; background: hsl(142, 76%, 36%);"></div>
+              <div style="font-weight: 700; font-size: ${isMobile ? '15px' : '18px'}; margin-bottom: ${isMobile ? '4px' : '6px'}; color: #7A8266; letter-spacing: -0.4px; line-height: 1.2;">${countryData.name}</div>
+              <div style="font-size: ${isMobile ? '13px' : '15px'}; color: #97A275; margin-bottom: ${isMobile ? '10px' : '14px'}; font-weight: 500;">${location.name}</div>
+              <div style="display: inline-flex; align-items: center; gap: ${isMobile ? '4px' : '6px'}; font-size: ${isMobile ? '9px' : '11px'}; color: #7A8266; background: #F5F6F2; padding: ${isMobile ? '4px 10px' : '6px 12px'}; border-radius: ${isMobile ? '6px' : '8px'}; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 700; margin-bottom: ${isMobile ? '10px' : '14px'}; border: 1px solid #D4D8C8;">
+                <div style="width: ${isMobile ? '5px' : '6px'}; height: ${isMobile ? '5px' : '6px'}; border-radius: 50%; background: #7A8266;"></div>
                 ${typeLabels[location.type]}
               </div>
               
               ${location.licensedPartner ? `
-              <div style="margin-bottom: ${isMobile ? '8px' : '10px'}; padding-bottom: ${isMobile ? '8px' : '10px'}; border-bottom: 1.5px solid hsl(215, 20%, 94%);">
-                <div style="font-size: ${isMobile ? '9px' : '10px'}; color: hsl(215, 16%, 47%); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: ${isMobile ? '3px' : '4px'};">Regulatory Authority</div>
-                <div style="font-size: ${isMobile ? '11px' : '12px'}; color: hsl(222.2, 84%, 4.9%); font-weight: 600; line-height: 1.4;">${location.licensedPartner}</div>
-                ${location.regulatoryBody ? `<div style="font-size: ${isMobile ? '9px' : '10px'}; color: hsl(160, 84%, 39%); font-weight: 700; margin-top: 2px;">${location.regulatoryBody}</div>` : ''}
+              <div style="margin-bottom: ${isMobile ? '8px' : '10px'}; padding-bottom: ${isMobile ? '8px' : '10px'}; border-bottom: 1.5px solid #E8EAE0;">
+                <div style="font-size: ${isMobile ? '9px' : '10px'}; color: #97A275; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: ${isMobile ? '3px' : '4px'};">Regulatory Authority</div>
+                <div style="font-size: ${isMobile ? '11px' : '12px'}; color: #3A3E30; font-weight: 600; line-height: 1.4;">${location.licensedPartner}</div>
+                ${location.regulatoryBody ? `<div style="font-size: ${isMobile ? '9px' : '10px'}; color: #7A8266; font-weight: 700; margin-top: 2px;">${location.regulatoryBody}</div>` : ''}
               </div>
               ` : ''}
               
               ${location.cultivationArea ? `
-              <div style="margin-bottom: ${isMobile ? '8px' : '10px'}; padding-bottom: ${isMobile ? '8px' : '10px'}; border-bottom: 1.5px solid hsl(215, 20%, 94%);">
-                <div style="font-size: ${isMobile ? '9px' : '10px'}; color: hsl(215, 16%, 47%); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: ${isMobile ? '3px' : '4px'};">Cultivation Area</div>
-                <div style="font-size: ${isMobile ? '13px' : '14px'}; color: hsl(222.2, 84%, 4.9%); font-weight: 700;">${location.cultivationArea}</div>
+              <div style="margin-bottom: ${isMobile ? '8px' : '10px'}; padding-bottom: ${isMobile ? '8px' : '10px'}; border-bottom: 1.5px solid #E8EAE0;">
+                <div style="font-size: ${isMobile ? '9px' : '10px'}; color: #97A275; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: ${isMobile ? '3px' : '4px'};">Cultivation Area</div>
+                <div style="font-size: ${isMobile ? '13px' : '14px'}; color: #3A3E30; font-weight: 700;">${location.cultivationArea}</div>
               </div>
               ` : ''}
               
               ${location.productionCapacity ? `
-              <div style="margin-bottom: ${isMobile ? '8px' : '10px'}; padding-bottom: ${isMobile ? '8px' : '10px'}; border-bottom: 1.5px solid hsl(215, 20%, 94%);">
-                <div style="font-size: ${isMobile ? '9px' : '10px'}; color: hsl(215, 16%, 47%); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: ${isMobile ? '3px' : '4px'};">Production Capacity</div>
-                <div style="font-size: ${isMobile ? '13px' : '14px'}; color: hsl(222.2, 84%, 4.9%); font-weight: 700;">${location.productionCapacity}</div>
+              <div style="margin-bottom: ${isMobile ? '8px' : '10px'}; padding-bottom: ${isMobile ? '8px' : '10px'}; border-bottom: 1.5px solid #E8EAE0;">
+                <div style="font-size: ${isMobile ? '9px' : '10px'}; color: #97A275; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: ${isMobile ? '3px' : '4px'};">Production Capacity</div>
+                <div style="font-size: ${isMobile ? '13px' : '14px'}; color: #3A3E30; font-weight: 700;">${location.productionCapacity}</div>
               </div>
               ` : ''}
               
-              <div style="margin-bottom: ${isMobile ? '8px' : '10px'}; padding-bottom: ${isMobile ? '8px' : '10px'}; border-bottom: 1.5px solid hsl(215, 20%, 94%);">
-                <div style="font-size: ${isMobile ? '9px' : '10px'}; color: hsl(215, 16%, 47%); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: ${isMobile ? '4px' : '6px'};">Certifications</div>
+              <div style="margin-bottom: ${isMobile ? '8px' : '10px'}; padding-bottom: ${isMobile ? '8px' : '10px'}; border-bottom: 1.5px solid #E8EAE0;">
+                <div style="font-size: ${isMobile ? '9px' : '10px'}; color: #97A275; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: ${isMobile ? '4px' : '6px'};">Certifications</div>
                 <div style="display: flex; flex-wrap: wrap; gap: ${isMobile ? '3px' : '4px'};">
                   ${certificationsHtml}
                 </div>
               </div>
               
               ${location.medicalLicense ? `
-              <div style="margin-bottom: ${isMobile ? '8px' : '10px'}; padding: ${isMobile ? '6px 10px' : '8px 12px'}; background: hsl(173, 58%, 96%); border-radius: ${isMobile ? '6px' : '8px'}; border: 1px solid hsl(173, 58%, 88%);">
-                <div style="font-size: ${isMobile ? '9px' : '10px'}; color: hsl(173, 58%, 39%); font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">✓ Medical License Active</div>
+              <div style="margin-bottom: ${isMobile ? '8px' : '10px'}; padding: ${isMobile ? '6px 10px' : '8px 12px'}; background: #F5F6F2; border-radius: ${isMobile ? '6px' : '8px'}; border: 1px solid #D4D8C8;">
+                <div style="font-size: ${isMobile ? '9px' : '10px'}; color: #7A8266; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">✓ Medical License Active</div>
               </div>
               ` : ''}
               
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: ${isMobile ? '8px' : '0'};">
-                <span style="font-size: ${isMobile ? '10px' : '11px'}; color: hsl(215, 16%, 47%); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;">Status</span>
-                <span style="font-size: ${isMobile ? '12px' : '13px'}; color: hsl(142, 76%, 36%); font-weight: 700; letter-spacing: 0.2px;">${countryData.status}</span>
+                <span style="font-size: ${isMobile ? '10px' : '11px'}; color: #97A275; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px;">Status</span>
+                <span style="font-size: ${isMobile ? '12px' : '13px'}; color: #7A8266; font-weight: 700; letter-spacing: 0.2px;">${countryData.status}</span>
               </div>
               
               ${!isMobile ? `
               <!-- Compliance Disclaimer -->
-              <div style="margin-top: 12px; padding-top: 12px; border-top: 1.5px solid hsl(215, 20%, 94%); font-size: 9px; color: hsl(215, 16%, 47%); line-height: 1.5; font-style: italic;">
+              <div style="margin-top: 12px; padding-top: 12px; border-top: 1.5px solid #E8EAE0; font-size: 9px; color: #97A275; line-height: 1.5; font-style: italic;">
                 All operations conducted by licensed partners. Digital Key holders do not handle or sell cannabis products directly. Blockchain-verified seed-to-sale traceability ensures regulatory compliance.
               </div>
               ` : ''}

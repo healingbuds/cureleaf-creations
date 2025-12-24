@@ -180,28 +180,48 @@ All colors MUST be HSL.
     --warning: 38 75% 55%;                /* Warm amber for attention */
     --info: 200 60% 50%;                  /* Calm blue for info */
     
-    /* Navigation overlay tokens - dark mode */
-    --nav-overlay: 210 12% 4%;            /* Dark backdrop overlay */
-    --nav-surface: 178 35% 18%;           /* Elevated menu surface - slightly lighter than background */
-    --nav-surface-elevated: 178 32% 22%;  /* Hover state surface */
-    --nav-item-active: 178 40% 28%;       /* Active item background */
-    --nav-item-hover: 178 35% 24%;        /* Hover item background */
-    --nav-text: 0 0% 98%;                 /* Primary nav text - high contrast */
-    --nav-text-muted: 0 0% 75%;           /* Secondary nav text */
-    --nav-border: 178 30% 30%;            /* Subtle borders for separation */
+    /* Navigation tokens - dark mode with proper hierarchy */
+    --nav-bg: 178 38% 18%;                /* Navigation background */
+    --nav-bg-elevated: 178 40% 22%;       /* Slightly elevated for scroll state */
+    --nav-surface: 178 35% 22%;           /* Menu surface - visible elevation */
+    --nav-surface-elevated: 178 32% 26%;  /* Hover state surface */
+    --nav-item-active: 0 0% 100%;         /* Active item uses white bg */
+    --nav-item-active-opacity: 0.2;       /* 20% opacity for active */
+    --nav-item-hover: 0 0% 100%;          /* Hover uses white bg */
+    --nav-item-hover-opacity: 0.12;       /* 12% opacity for hover */
+    --nav-text: 0 0% 100%;                /* Primary nav text - pure white */
+    --nav-text-muted: 0 0% 80%;           /* Secondary nav text */
+    --nav-border: 0 0% 100%;              /* White borders */
+    --nav-border-opacity: 0.15;           /* Border opacity */
+    --nav-dropdown-bg: 210 12% 10%;       /* Dropdown background - darker for contrast */
+    --nav-dropdown-border: 210 8% 25%;    /* Dropdown border */
+    --nav-dropdown-hover: 0 0% 100%;      /* Dropdown item hover */
+    --nav-dropdown-hover-opacity: 0.1;    /* Dropdown hover opacity */
   }
 }
 
-/* Navigation overlay tokens - light mode (inside header context) */
+/* Navigation tokens - light mode (shared header context) */
 :root {
-  --nav-overlay: 0 0% 0%;                 /* Black backdrop overlay */
-  --nav-surface: 178 42% 22%;             /* Elevated menu surface - slightly lighter than header */
-  --nav-surface-elevated: 178 40% 26%;    /* Hover state surface */
-  --nav-item-active: 178 45% 32%;         /* Active item background */
-  --nav-item-hover: 178 42% 28%;          /* Hover item background */
+  --nav-bg: 178 42% 21%;                  /* Navigation background - brand teal */
+  --nav-bg-elevated: 178 44% 23%;         /* Slightly elevated for scroll state */
+  --nav-surface: 178 40% 24%;             /* Menu surface - visible elevation */
+  --nav-surface-elevated: 178 38% 28%;    /* Hover state surface */
+  --nav-item-active: 0 0% 100%;           /* Active item uses white bg */
+  --nav-item-active-opacity: 0.25;        /* 25% opacity for active - high visibility */
+  --nav-item-hover: 0 0% 100%;            /* Hover uses white bg */
+  --nav-item-hover-opacity: 0.15;         /* 15% opacity for hover */
   --nav-text: 0 0% 100%;                  /* Primary nav text - pure white */
-  --nav-text-muted: 0 0% 85%;             /* Secondary nav text - high contrast */
-  --nav-border: 0 0% 100%;                /* White borders at low opacity */
+  --nav-text-muted: 0 0% 88%;             /* Secondary nav text - high contrast */
+  --nav-border: 0 0% 100%;                /* White borders */
+  --nav-border-opacity: 0.2;              /* Border opacity */
+  --nav-dropdown-bg: 210 12% 10%;         /* Dropdown background - dark for contrast */
+  --nav-dropdown-border: 210 8% 25%;      /* Dropdown border */
+  --nav-dropdown-hover: 0 0% 100%;        /* Dropdown item hover */
+  --nav-dropdown-hover-opacity: 0.12;     /* Dropdown hover opacity */
+  
+  /* Overlay tokens */
+  --overlay-bg: 0 0% 0%;                  /* Black overlay */
+  --overlay-opacity: 0.95;                /* Near-opaque to fully block content */
 }
 
 @layer base {

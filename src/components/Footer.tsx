@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Mail, MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useGeoLocation } from "@/hooks/useGeoLocation";
-import MedicalLeafIcon from "@/components/icons/MedicalLeafIcon";
+import HBIcon from "@/components/HBIcon";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -52,7 +52,7 @@ const Footer = () => {
               {/* Patient */}
               <div>
               <h4 className="font-jakarta font-semibold text-sm uppercase tracking-wider mb-5 text-white/90 flex items-center gap-2">
-                  <MedicalLeafIcon size={16} className="flex-shrink-0 text-primary" />
+                  <HBIcon size="sm" variant="green" className="flex-shrink-0" />
                   Patient
                 </h4>
                 <ul className="space-y-3">
@@ -82,7 +82,7 @@ const Footer = () => {
               {/* Support */}
               <div>
               <h4 className="font-jakarta font-semibold text-sm uppercase tracking-wider mb-5 text-white/90 flex items-center gap-2">
-                  <MedicalLeafIcon size={16} className="flex-shrink-0 text-primary" />
+                  <HBIcon size="sm" variant="green" className="flex-shrink-0" />
                   Support
                 </h4>
                 <ul className="space-y-3">
@@ -107,7 +107,7 @@ const Footer = () => {
               {/* Legal */}
               <div>
               <h4 className="font-jakarta font-semibold text-sm uppercase tracking-wider mb-5 text-white/90 flex items-center gap-2">
-                  <MedicalLeafIcon size={16} className="flex-shrink-0 text-primary" />
+                  <HBIcon size="sm" variant="green" className="flex-shrink-0" />
                   Legal
                 </h4>
                 <ul className="space-y-3">

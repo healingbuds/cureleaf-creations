@@ -49,8 +49,7 @@ const getStatusVariant = (status: string): 'default' | 'secondary' | 'destructiv
 const Orders = () => {
   const navigate = useNavigate();
   const { orders, isLoading, reorder } = useOrderTracking();
-  const { drGreenClient } = useShop();
-  const { setIsCartOpen, isEligible } = useShop();
+  const { drGreenClient, countryCode, setIsCartOpen, isEligible } = useShop();
 
   const handleReorder = async (order: typeof orders[0]) => {
     await reorder(order);
@@ -147,7 +146,7 @@ const Orders = () => {
                               </div>
                               <div className="flex items-center gap-3">
                                 <p className="font-semibold text-foreground text-lg">
-                                  {formatPrice(order.total_amount, drGreenClient?.country_code || 'PT')}
+                                  {formatPrice(order.total_amount, countryCode)}
                                 </p>
                               </div>
                             </div>
@@ -157,14 +156,14 @@ const Orders = () => {
                               <div className="bg-background/50 rounded-md p-3">
                                 <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wide">Items</p>
                                 <div className="space-y-1">
-                                  {order.items.map((item, idx) => (
-                                    <div key={idx} className="flex justify-between text-sm">
-                                      <span className="text-foreground">{item.strain_name}</span>
-                                      <span className="text-muted-foreground">
-                                        {item.quantity}g × {formatPrice(item.unit_price, drGreenClient?.country_code || 'PT')}
-                                      </span>
-                                    </div>
-                                  ))}
+                                    {order.items.map((item, idx) => (
+                                      <div key={idx} className="flex justify-between text-sm">
+                                        <span className="text-foreground">{item.strain_name}</span>
+                                        <span className="text-muted-foreground">
+                                          {item.quantity}g × {formatPrice(item.unit_price, countryCode)}
+                                        </span>
+                                      </div>
+                                    ))}
                                 </div>
                               </div>
                             )}

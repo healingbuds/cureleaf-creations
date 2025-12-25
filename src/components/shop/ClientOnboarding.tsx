@@ -19,6 +19,7 @@ import {
   Camera,
   ShieldCheck,
   FileWarning,
+  HeartPulse,
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -32,6 +33,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import {
   Select,
@@ -108,6 +110,7 @@ const createPersonalDetailsSchema = (countryCode: string) => {
       },
       { message: `You must be at least ${minimumAge} years old to register for medical cannabis in your region` }
     ),
+    gender: z.string().min(1, 'Please select your gender'),
   });
 };
 
@@ -135,6 +138,26 @@ const addressSchema = z.object({
   country: z.string().min(2, 'Country is required'),
 });
 
+// Legacy medical history schema matching WordPress DAPP API
+const medicalHistorySchema = z.object({
+  medicalHistory0: z.boolean().default(false), // Heart problems
+  medicalHistory1: z.boolean().default(false), // Cancer treatment
+  medicalHistory2: z.boolean().default(false), // Immunosuppressants
+  medicalHistory3: z.boolean().default(false), // Liver disease
+  medicalHistory4: z.boolean().default(false), // Psychiatric history
+  medicalHistory5: z.array(z.string()).default(['none']), // Diagnosed conditions
+  medicalHistory6: z.boolean().default(false), // Suicidal history
+  medicalHistory7: z.array(z.string()).default(['none']), // Family conditions
+  medicalHistory9: z.boolean().default(false), // Alcohol abuse history
+  medicalHistory10: z.boolean().default(false), // Drug services care history
+  medicalHistory11: z.string().default('0'), // Alcohol units per week
+  medicalHistory12: z.boolean().default(false), // Using cannabis to reduce other meds
+  medicalHistory13: z.string().default('Never'), // How often cannabis used
+  medicalHistory14: z.array(z.string()).default(['never']), // How cannabis used
+  medicalHistory15: z.string().max(500).optional(), // Additional notes
+  medicalHistory16: z.boolean().default(false), // Pregnant or breastfeeding
+});
+
 const medicalSchema = z.object({
   conditions: z.string().min(10, 'Please describe your medical conditions').max(2000, 'Description is too long'),
   currentMedications: z.string().max(1000, 'Text is too long').optional(),
@@ -149,11 +172,13 @@ const medicalSchema = z.object({
 
 type PersonalDetails = z.infer<typeof personalDetailsSchema>;
 type Address = z.infer<typeof addressSchema>;
+type MedicalHistory = z.infer<typeof medicalHistorySchema>;
 type Medical = z.infer<typeof medicalSchema>;
 
 const steps = [
   { id: 'personal', title: 'Personal Details', icon: User },
   { id: 'address', title: 'Shipping Address', icon: MapPin },
+  { id: 'history', title: 'Medical History', icon: HeartPulse },
   { id: 'medical', title: 'Medical Information', icon: Stethoscope },
   { id: 'complete', title: 'Complete', icon: CheckCircle2 },
 ];
@@ -163,6 +188,37 @@ const countries = [
   { code: 'ZA', name: 'South Africa' },
   { code: 'TH', name: 'Thailand' },
   { code: 'GB', name: 'United Kingdom' },
+];
+
+// Medical history field labels for checkboxes
+const medicalHistoryFields = [
+  { key: 'medicalHistory0', label: 'History of heart problems', description: 'Including heart disease, arrhythmia, or heart attacks' },
+  { key: 'medicalHistory1', label: 'Currently treated for cancer', description: 'Undergoing chemotherapy, radiation, or other cancer treatments' },
+  { key: 'medicalHistory2', label: 'Taking immunosuppressants', description: 'Medications that suppress the immune system' },
+  { key: 'medicalHistory3', label: 'History of liver disease', description: 'Including hepatitis, cirrhosis, or fatty liver' },
+  { key: 'medicalHistory4', label: 'Psychiatric history', description: 'History of mental health conditions requiring treatment' },
+  { key: 'medicalHistory6', label: 'History of suicidal thoughts or self-harm', description: 'Past or current suicidal ideation' },
+  { key: 'medicalHistory9', label: 'History of alcohol abuse', description: 'Past or current alcohol dependency' },
+  { key: 'medicalHistory10', label: 'History of drug services care', description: 'Previous treatment for substance abuse' },
+  { key: 'medicalHistory12', label: 'Using cannabis to reduce other medications', description: 'Seeking to reduce reliance on other prescribed medications' },
+  { key: 'medicalHistory16', label: 'Pregnant or breastfeeding', description: 'Currently pregnant or nursing' },
+] as const;
+
+const cannabisUsageOptions = [
+  { value: 'Never', label: 'Never used' },
+  { value: 'Rarely', label: 'Rarely (few times a year)' },
+  { value: 'Occasionally', label: 'Occasionally (monthly)' },
+  { value: 'Regularly', label: 'Regularly (weekly)' },
+  { value: 'Daily', label: 'Daily' },
+];
+
+const cannabisMethodOptions = [
+  { value: 'never', label: 'Never used' },
+  { value: 'smoking', label: 'Smoking' },
+  { value: 'vaping', label: 'Vaping' },
+  { value: 'edibles', label: 'Edibles' },
+  { value: 'oils', label: 'Oils/Tinctures' },
+  { value: 'topicals', label: 'Topicals' },
 ];
 
 export function ClientOnboarding() {
@@ -179,6 +235,7 @@ export function ClientOnboarding() {
   const [formData, setFormData] = useState<{
     personal?: PersonalDetails;
     address?: Address;
+    medicalHistory?: MedicalHistory;
     medical?: Medical;
   }>({});
   const { toast } = useToast();
@@ -193,6 +250,7 @@ export function ClientOnboarding() {
       email: '',
       phone: '',
       dateOfBirth: '',
+      gender: '',
     },
   });
 
@@ -203,6 +261,28 @@ export function ClientOnboarding() {
       city: '',
       postalCode: '',
       country: 'PT',
+    },
+  });
+
+  const medicalHistoryForm = useForm<MedicalHistory>({
+    resolver: zodResolver(medicalHistorySchema),
+    defaultValues: formData.medicalHistory || {
+      medicalHistory0: false,
+      medicalHistory1: false,
+      medicalHistory2: false,
+      medicalHistory3: false,
+      medicalHistory4: false,
+      medicalHistory5: ['none'],
+      medicalHistory6: false,
+      medicalHistory7: ['none'],
+      medicalHistory9: false,
+      medicalHistory10: false,
+      medicalHistory11: '0',
+      medicalHistory12: false,
+      medicalHistory13: 'Never',
+      medicalHistory14: ['never'],
+      medicalHistory15: '',
+      medicalHistory16: false,
     },
   });
 
@@ -257,7 +337,12 @@ export function ClientOnboarding() {
     }
     setPostalError(null);
     setFormData((prev) => ({ ...prev, address: data }));
-    setCurrentStep(2);
+    setCurrentStep(2); // Go to Medical History step
+  };
+
+  const handleMedicalHistorySubmit = (data: MedicalHistory) => {
+    setFormData((prev) => ({ ...prev, medicalHistory: data }));
+    setCurrentStep(3); // Go to Medical Information step
   };
 
   const handleMedicalSubmit = async (data: Medical) => {
@@ -298,6 +383,7 @@ export function ClientOnboarding() {
             data: {
               personal: formData.personal,
               address: formData.address,
+              medicalHistory: formData.medicalHistory,
               medicalRecord: data,
             },
           },
@@ -355,7 +441,7 @@ export function ClientOnboarding() {
       setStoredClientId(clientId);
       setKycLinkReceived(!!kycLink);
       setKycStatus('success');
-      setCurrentStep(3);
+      setCurrentStep(4); // Go to Complete step
 
       // Show appropriate toast based on API success
       if (kycLink) {
@@ -570,26 +656,51 @@ export function ClientOnboarding() {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={personalForm.control}
-                      name="dateOfBirth"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Date of Birth</FormLabel>
-                          <FormControl>
-                            <Input 
-                              type="date" 
-                              max={new Date(new Date().setFullYear(new Date().getFullYear() - minimumAge)).toISOString().split('T')[0]}
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormMessage />
-                          <p className="text-xs text-muted-foreground">
-                            You must be at least {minimumAge} years old to register in {countries.find(c => c.code === selectedCountry)?.name || 'your region'}
-                          </p>
-                        </FormItem>
-                      )}
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={personalForm.control}
+                        name="dateOfBirth"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Date of Birth</FormLabel>
+                            <FormControl>
+                              <Input 
+                                type="date" 
+                                max={new Date(new Date().setFullYear(new Date().getFullYear() - minimumAge)).toISOString().split('T')[0]}
+                                {...field} 
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={personalForm.control}
+                        name="gender"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Gender</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="male">Male</SelectItem>
+                                <SelectItem value="female">Female</SelectItem>
+                                <SelectItem value="other">Other</SelectItem>
+                                <SelectItem value="prefer-not-to-say">Prefer not to say</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      You must be at least {minimumAge} years old to register in {countries.find(c => c.code === selectedCountry)?.name || 'your region'}
+                    </p>
                     {ageError && (
                       <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
                         <AlertTriangle className="h-4 w-4 flex-shrink-0" />
@@ -729,8 +840,166 @@ export function ClientOnboarding() {
           </motion.div>
         )}
 
-        {/* Step 3: Medical Information */}
+        {/* Step 3: Medical History (Legacy DAPP fields) */}
         {currentStep === 2 && (
+          <motion.div
+            key="medical-history"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+          >
+            <Card className="bg-card/50 backdrop-blur-sm border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <HeartPulse className="h-5 w-5" />
+                  Medical History
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Please answer the following health screening questions honestly. This information helps us ensure your safety.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <Form {...medicalHistoryForm}>
+                  <form
+                    onSubmit={medicalHistoryForm.handleSubmit(handleMedicalHistorySubmit)}
+                    className="space-y-6"
+                  >
+                    {/* Boolean checkbox fields */}
+                    <div className="space-y-4">
+                      <h4 className="font-medium text-sm">Health Conditions</h4>
+                      <div className="space-y-3">
+                        {medicalHistoryFields.map((field) => (
+                          <FormField
+                            key={field.key}
+                            control={medicalHistoryForm.control}
+                            name={field.key as keyof MedicalHistory}
+                            render={({ field: formField }) => (
+                              <FormItem className="flex items-start space-x-3 space-y-0 p-3 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={formField.value as boolean}
+                                    onCheckedChange={formField.onChange}
+                                  />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                  <FormLabel className="font-normal cursor-pointer">
+                                    {field.label}
+                                  </FormLabel>
+                                  <FormDescription className="text-xs">
+                                    {field.description}
+                                  </FormDescription>
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Alcohol consumption */}
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-sm">Alcohol Consumption</h4>
+                      <FormField
+                        control={medicalHistoryForm.control}
+                        name="medicalHistory11"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Alcohol units per week</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select amount" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="0">None</SelectItem>
+                                <SelectItem value="1-7">1-7 units</SelectItem>
+                                <SelectItem value="8-14">8-14 units</SelectItem>
+                                <SelectItem value="15-21">15-21 units</SelectItem>
+                                <SelectItem value="22+">22+ units</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormDescription>
+                              1 unit = 1 small glass of wine, half pint of beer, or 1 shot
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Cannabis usage */}
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-sm">Cannabis Experience</h4>
+                      <FormField
+                        control={medicalHistoryForm.control}
+                        name="medicalHistory13"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>How often have you used cannabis?</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select frequency" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {cannabisUsageOptions.map((option) => (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Additional notes */}
+                    <FormField
+                      control={medicalHistoryForm.control}
+                      name="medicalHistory15"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Additional Medical Notes (Optional)</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Any other medical information you'd like to share..."
+                              className="min-h-[80px]"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={goBack}
+                        className="flex-1"
+                      >
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back
+                      </Button>
+                      <Button type="submit" className="flex-1">
+                        Continue
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Step 4: Medical Information */}
+        {currentStep === 3 && (
           <motion.div
             key="medical"
             initial={{ opacity: 0, x: 20 }}
@@ -900,7 +1169,7 @@ export function ClientOnboarding() {
         )}
 
         {/* KYC Verification In Progress Screen */}
-        {currentStep === 2 && kycStatus === 'verifying' && (
+        {currentStep === 3 && kycStatus === 'verifying' && (
           <motion.div
             key="verifying"
             initial={{ opacity: 0 }}
@@ -935,7 +1204,7 @@ export function ClientOnboarding() {
         )}
 
         {/* Document Quality Error Screen (422) */}
-        {currentStep === 2 && documentError === 'document_quality' && (
+        {currentStep === 3 && documentError === 'document_quality' && (
           <motion.div
             key="document-error"
             initial={{ opacity: 0, scale: 0.95 }}
@@ -1008,8 +1277,8 @@ export function ClientOnboarding() {
           </motion.div>
         )}
 
-        {/* Step 4: Complete */}
-        {currentStep === 3 && (
+        {/* Step 5: Complete */}
+        {currentStep === 4 && (
           <motion.div
             key="complete"
             initial={{ opacity: 0, scale: 0.95 }}

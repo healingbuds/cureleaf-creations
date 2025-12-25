@@ -189,52 +189,55 @@ const NavigationOverlay = ({
                 paddingBottom: 'max(24px, env(safe-area-inset-bottom, 24px))'
               }}
             >
-              {/* Navigation Links */}
-              <div className="flex flex-col space-y-2">
-                <Link 
-                  to="/" 
-                  className={navLinkStyles(isActive("/"))}
-                  onClick={onClose}
-                >
-                  {isActive("/") && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  )}
-                  Home
-                </Link>
-
-                <Link 
-                  to="/eligibility" 
-                  className={navLinkStyles(isActive("/eligibility"))}
-                  onClick={onClose}
-                >
-                  {isActive("/eligibility") && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  )}
-                  Eligibility
-                </Link>
-
-                <Link 
-                  to="/shop" 
-                  className={navLinkStyles(isShopActive)}
-                  onClick={onClose}
-                >
-                  {isShopActive && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  )}
-                  Dispensary
-                </Link>
-
-                <Link 
-                  to="/support" 
-                  className={navLinkStyles(isActive("/support"))}
-                  onClick={onClose}
-                >
-                  {isActive("/support") && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                  )}
-                  Support
-                </Link>
-              </div>
+              {/* Navigation Links - Staggered Animation */}
+              <motion.div 
+                className="flex flex-col space-y-2"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: {},
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.06,
+                      delayChildren: 0.1
+                    }
+                  }
+                }}
+              >
+                {[
+                  { to: "/", label: "Home", active: isActive("/") },
+                  { to: "/eligibility", label: "Eligibility", active: isActive("/eligibility") },
+                  { to: "/shop", label: "Dispensary", active: isShopActive },
+                  { to: "/support", label: "Support", active: isActive("/support") }
+                ].map((item) => (
+                  <motion.div
+                    key={item.to}
+                    variants={{
+                      hidden: { opacity: 0, x: 40 },
+                      visible: { 
+                        opacity: 1, 
+                        x: 0,
+                        transition: {
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 25
+                        }
+                      }
+                    }}
+                  >
+                    <Link 
+                      to={item.to} 
+                      className={navLinkStyles(item.active)}
+                      onClick={onClose}
+                    >
+                      {item.active && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                      )}
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                ))}
+              </motion.div>
 
               {/* Divider */}
               <div className="my-6 h-px bg-white/10" />

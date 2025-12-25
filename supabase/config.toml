@@ -1,1 +1,7 @@
 project_id = "fyklygjqxrvnyltooegf"
+
+[functions.seed-test-users]
+verify_jwt = false
+
+[functions.drgreen-health]
+verify_jwt = false

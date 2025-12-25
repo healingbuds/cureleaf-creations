@@ -13,6 +13,9 @@ import {
   ArrowLeft,
   Loader2,
   AlertTriangle,
+  RefreshCw,
+  Mail,
+  Clock,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -161,8 +164,11 @@ const countries = [
 export function ClientOnboarding() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
   const [ageError, setAgeError] = useState<string | null>(null);
   const [postalError, setPostalError] = useState<string | null>(null);
+  const [kycLinkReceived, setKycLinkReceived] = useState<boolean | null>(null);
+  const [storedClientId, setStoredClientId] = useState<string | null>(null);
   const [formData, setFormData] = useState<{
     personal?: PersonalDetails;
     address?: Address;
@@ -265,6 +271,7 @@ export function ClientOnboarding() {
       // Prepare client data
       let clientId = `local-${Date.now()}`;
       let kycLink = null;
+      let apiSuccess = false;
 
       // Try to call edge function to create client (non-blocking)
       try {
@@ -282,6 +289,7 @@ export function ClientOnboarding() {
         if (!error && result?.clientId) {
           clientId = result.clientId;
           kycLink = result.kycLink || null;
+          apiSuccess = true;
         }
       } catch (apiError) {
         // Edge function failed - continue with local client ID
@@ -304,21 +312,82 @@ export function ClientOnboarding() {
       }
 
       await refreshClient();
+      setStoredClientId(clientId);
+      setKycLinkReceived(!!kycLink);
       setCurrentStep(3);
 
-      toast({
-        title: 'Registration submitted',
-        description: 'Please complete KYC verification to continue.',
-      });
+      // Show appropriate toast based on API success
+      if (kycLink) {
+        toast({
+          title: 'Registration complete!',
+          description: 'Check your email for next steps.',
+        });
+      } else if (apiSuccess) {
+        toast({
+          title: 'Registration saved!',
+          description: "We'll email your verification link shortly.",
+        });
+      } else {
+        toast({
+          title: 'Registration saved',
+          description: 'This is taking longer than expected. Your information is saved.',
+        });
+      }
     } catch (error: any) {
       console.error('Registration error:', error);
       toast({
-        title: 'Registration failed',
-        description: error.message || 'Please try again later.',
+        title: 'Something went wrong',
+        description: 'Please try again. Contact support if the problem persists.',
         variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Retry function to request verification link
+  const retryKycLink = async () => {
+    setIsRetrying(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: result, error } = await supabase.functions.invoke('drgreen-proxy', {
+        body: {
+          action: 'request-kyc-link',
+          data: {
+            clientId: storedClientId,
+            personal: formData.personal,
+            address: formData.address,
+          },
+        },
+      });
+
+      if (!error && result?.kycLink) {
+        // Update the stored KYC link
+        await supabase.from('drgreen_clients')
+          .update({ kyc_link: result.kycLink })
+          .eq('user_id', user.id);
+
+        setKycLinkReceived(true);
+        toast({
+          title: 'Verification link sent!',
+          description: 'Please check your email.',
+        });
+      } else {
+        toast({
+          title: 'Still processing',
+          description: 'Please contact support if the problem persists.',
+        });
+      }
+    } catch (error) {
+      console.error('Retry KYC error:', error);
+      toast({
+        title: 'Still processing',
+        description: 'Please contact support if the problem persists.',
+      });
+    } finally {
+      setIsRetrying(false);
     }
   };
 
@@ -795,12 +864,60 @@ export function ClientOnboarding() {
                   <CheckCircle2 className="h-10 w-10 text-primary" />
                 </motion.div>
                 <h2 className="text-2xl font-bold mb-2">Registration Submitted!</h2>
-                <p className="text-muted-foreground mb-6">
-                  Your application is being reviewed. You'll receive an email with KYC instructions shortly.
-                </p>
-                <Button onClick={() => navigate('/shop')}>
-                  Return to Shop
-                </Button>
+                
+                {kycLinkReceived ? (
+                  // Success state - KYC link received
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-center gap-2 text-primary">
+                      <Mail className="h-5 w-5" />
+                      <p className="text-muted-foreground">
+                        Your verification link has been sent. Check your email to continue.
+                      </p>
+                    </div>
+                    <Button onClick={() => navigate('/shop')}>
+                      Return to Shop
+                    </Button>
+                  </div>
+                ) : (
+                  // Pending state - KYC link not received yet
+                  <div className="space-y-4">
+                    <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg text-left">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock className="h-5 w-5 text-amber-600" />
+                        <span className="font-medium text-amber-700 dark:text-amber-400">
+                          Verification link pending
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Your registration was saved successfully. We're preparing your verification link.
+                      </p>
+                      <Button
+                        variant="outline"
+                        onClick={retryKycLink}
+                        disabled={isRetrying}
+                        className="w-full"
+                      >
+                        {isRetrying ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Requesting...
+                          </>
+                        ) : (
+                          <>
+                            <RefreshCw className="mr-2 h-4 w-4" />
+                            Request Verification Link
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Or check your email in the next 24 hours. If you don't receive it, please contact support.
+                    </p>
+                    <Button onClick={() => navigate('/shop')}>
+                      Return to Shop
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </motion.div>

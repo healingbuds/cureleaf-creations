@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import { formatPrice } from '@/lib/currency';
+import { GeneratedProductImage } from './GeneratedProductImage';
 
 interface ProductCardProps {
   product: Product;
@@ -144,14 +145,13 @@ export function ProductCard({ product, onViewDetails, showDataSource = false }: 
         
         {/* Image container with consistent sizing */}
         <div className="relative aspect-square overflow-hidden bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900/40 dark:to-slate-900/60">
-          {/* Centered image with fixed size container */}
-          <div className="absolute inset-0 flex items-center justify-center p-6">
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]"
-              loading="lazy"
-              style={{ maxWidth: '90%', maxHeight: '90%' }}
+          {/* Generated product image with 4K support */}
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <GeneratedProductImage
+              productId={product.id}
+              productName={product.name}
+              originalImageUrl={product.imageUrl}
+              className="drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)] transition-transform duration-500 group-hover:scale-110"
             />
           </div>
           

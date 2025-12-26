@@ -164,6 +164,39 @@ export type Database = {
         }
         Relationships: []
       }
+      generated_product_images: {
+        Row: {
+          created_at: string
+          generated_at: string
+          generated_image_url: string
+          id: string
+          original_image_url: string | null
+          product_id: string
+          product_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          generated_at?: string
+          generated_image_url: string
+          id?: string
+          original_image_url?: string | null
+          product_id: string
+          product_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          generated_at?: string
+          generated_image_url?: string
+          id?: string
+          original_image_url?: string | null
+          product_id?: string
+          product_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       prescription_documents: {
         Row: {
           created_at: string

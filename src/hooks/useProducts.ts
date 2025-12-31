@@ -125,11 +125,33 @@ export function useProducts(countryCode: string = 'PT') {
         },
       });
 
-      if (!fnError && data?.success && data?.data?.strains?.length > 0) {
-        console.log(`Received ${data.data.strains.length} strains from Dr Green API`);
+      // API response can be:
+      // 1. Array of strains directly: [{ id, name, ... }]
+      // 2. Object with strains property: { strains: [...] }
+      // 3. Object with data.strains: { data: { strains: [...] } }
+      // 4. Wrapped response: { success: true, data: { strains: [...] } }
+      
+      let strainsArray: any[] = [];
+      
+      if (!fnError && data) {
+        if (Array.isArray(data)) {
+          strainsArray = data;
+        } else if (Array.isArray(data.strains)) {
+          strainsArray = data.strains;
+        } else if (Array.isArray(data.data?.strains)) {
+          strainsArray = data.data.strains;
+        } else if (Array.isArray(data.data)) {
+          strainsArray = data.data;
+        }
+      }
+      
+      console.log(`[Dr Green API] Received ${strainsArray.length} strains from API`);
+
+      if (strainsArray.length > 0) {
+        console.log(`Processing ${strainsArray.length} strains from Dr Green API`);
         
         // Transform API response to our Product interface
-        const transformedProducts: Product[] = data.data.strains.map((strain: any, index: number) => {
+        const transformedProducts: Product[] = strainsArray.map((strain: any, index: number) => {
           // Use branded jar image based on strain name, fallback to index
           const imageUrl = getBrandedImage(strain.name);
 
@@ -201,10 +223,8 @@ export function useProducts(countryCode: string = 'PT') {
       // Log API error/warning
       if (fnError) {
         console.warn('Dr Green API error, falling back to local DB:', fnError);
-      } else if (!data?.success) {
-        console.warn('Dr Green API returned unsuccessful, falling back to local DB:', data);
       } else {
-        console.warn('Dr Green API returned no strains, falling back to local DB');
+        console.warn('Dr Green API returned no strains, falling back to local DB. Response:', data);
       }
 
       // Fallback: Fetch from local strains table

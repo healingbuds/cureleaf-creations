@@ -24,6 +24,7 @@ import NavigationMenu from "@/components/NavigationMenu";
 import NavigationOverlay from "@/components/NavigationOverlay";
 import AnimatedMenuButton from "@/components/AnimatedMenuButton";
 import { WalletButton } from "@/components/WalletConnectionModal";
+import { KYCStatusBadge } from "@/components/KYCStatusBadge";
 
 interface HeaderProps {
   onMenuStateChange?: (isOpen: boolean) => void;
@@ -167,6 +168,9 @@ const Header = ({ onMenuStateChange }: HeaderProps) => {
                 
                 {/* Wallet Connection Button - dApp Hydration Layer */}
                 <WalletButton className="ml-1" />
+
+                {/* KYC Status Badge - Persistent indicator for logged-in users */}
+                {user && <KYCStatusBadge />}
 
                 <div className="flex items-center gap-2 ml-3">
                   {/* Check Eligibility - Emerald Green CTA */}

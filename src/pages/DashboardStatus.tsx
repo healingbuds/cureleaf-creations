@@ -7,7 +7,8 @@ import { useShop } from '@/context/ShopContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Clock, Lock, UserCircle, FileText, Shield, Loader2, RefreshCw } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { CheckCircle2, Clock, Lock, UserCircle, FileText, Shield, Loader2, RefreshCw, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 
@@ -92,6 +93,7 @@ export default function DashboardStatus() {
   const hasClient = !!drGreenClient;
   const isKycVerified = drGreenClient?.is_kyc_verified === true;
   const adminApproval = drGreenClient?.admin_approval;
+  const hasLocalClientId = drGreenClient?.drgreen_client_id?.startsWith('local-');
 
   const getStepStatus = (stepId: string): 'complete' | 'current' | 'pending' => {
     switch (stepId) {
@@ -210,6 +212,25 @@ export default function DashboardStatus() {
                 </CardHeader>
 
                 <CardContent className="pt-6">
+                  {/* Sync Required Alert */}
+                  {hasLocalClientId && (
+                    <Alert variant="default" className="mb-6 border-amber-500/30 bg-amber-500/10">
+                      <AlertTriangle className="h-4 w-4 text-amber-600" />
+                      <AlertTitle className="text-amber-700 dark:text-amber-400">Registration Sync Required</AlertTitle>
+                      <AlertDescription className="text-amber-600 dark:text-amber-300">
+                        Your registration wasn't fully synced with our verification provider. 
+                        Please complete registration again to receive your KYC verification email from First AML.
+                      </AlertDescription>
+                      <Button 
+                        asChild 
+                        size="sm" 
+                        className="mt-3 bg-amber-600 hover:bg-amber-500"
+                      >
+                        <Link to="/shop/register">Complete Registration</Link>
+                      </Button>
+                    </Alert>
+                  )}
+
                   {/* Progress Tracker */}
                   <div className="space-y-4 mb-8">
                     {steps.map((step, index) => {

@@ -508,8 +508,32 @@ serve(async (req) => {
           throw new Error("Name fields exceed maximum length");
         }
         
-        logInfo("Creating client with legacy payload");
+        // Enhanced logging for debugging API credential issues
+        logInfo("Creating client with legacy payload", {
+          hasApiKey: !!Deno.env.get("DRGREEN_API_KEY"),
+          hasPrivateKey: !!Deno.env.get("DRGREEN_PRIVATE_KEY"),
+          email: payload.email?.slice(0, 5) + '***',
+          countryCode: payload.countryCode,
+        });
+        
         response = await drGreenRequestBody("/clients/", "POST", payload);
+        
+        // Log response details for debugging
+        const clonedResp = response.clone();
+        const respBody = await clonedResp.text();
+        logInfo("Client creation API response", {
+          status: response.status,
+          statusText: response.statusText,
+          bodyPreview: respBody.slice(0, 300),
+        });
+        
+        if (!response.ok) {
+          logError("Client creation failed", {
+            status: response.status,
+            body: respBody.slice(0, 500),
+          });
+        }
+        
         break;
       }
       

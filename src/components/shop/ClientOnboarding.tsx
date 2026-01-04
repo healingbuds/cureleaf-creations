@@ -537,6 +537,19 @@ export function ClientOnboarding() {
             logEvent('kyc.link_received', clientId, { linkPresent: true });
           }
         }
+        
+        // Check for API-level errors in the result (even without JS error)
+        if (result?.error || result?.statusCode >= 400) {
+          console.warn('[Registration] Dr Green API returned error:', {
+            error: result?.error,
+            statusCode: result?.statusCode,
+            message: result?.message,
+          });
+          logEvent('registration.api_error', 'pending', { 
+            error: result?.error || 'Unknown',
+            statusCode: result?.statusCode,
+          });
+        }
       } catch (apiError: any) {
         // Check for 422 error in catch block
         if (apiError?.status === 422 || apiError?.message?.includes('Unprocessable')) {

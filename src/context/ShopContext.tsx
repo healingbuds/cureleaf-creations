@@ -181,6 +181,12 @@ export function ShopProvider({ children }: { children: React.ReactNode }) {
   const syncVerificationFromDrGreen = useCallback(async (): Promise<boolean> => {
     if (!drGreenClient?.drgreen_client_id) return false;
     
+    // Skip sync for local-only clients (API registration failed)
+    if (drGreenClient.drgreen_client_id.startsWith('local-')) {
+      console.log('[ShopContext] Skipping sync for local-only client - re-registration required');
+      return false;
+    }
+    
     setIsSyncing(true);
     try {
       const { data, error } = await supabase.functions.invoke('drgreen-proxy', {

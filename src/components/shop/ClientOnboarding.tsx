@@ -507,9 +507,45 @@ export function ClientOnboarding() {
 
       // Try to call edge function to create client (non-blocking)
       try {
+        console.log('[Registration] ========== PRE-REQUEST DIAGNOSTICS ==========');
+        console.log('[Registration] Timestamp:', new Date().toISOString());
+        console.log('[Registration] Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+        console.log('[Registration] User ID:', user.id);
+        
+        // Verify session is still valid
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        console.log('[Registration] Session check:', { 
+          hasSession: !!session, 
+          error: sessionError?.message,
+          expiresAt: session?.expires_at,
+          tokenLength: session?.access_token?.length 
+        });
+        
+        if (!session) {
+          console.error('[Registration] No valid session - user may need to re-authenticate');
+          toast({
+            title: 'Session expired',
+            description: 'Please sign in again to complete registration.',
+            variant: 'destructive',
+          });
+          setIsSubmitting(false);
+          clearInterval(progressInterval);
+          return;
+        }
+        
+        // Quick health check to verify edge function is reachable
+        console.log('[Registration] Running health check...');
+        const healthCheck = await supabase.functions.invoke('drgreen-proxy', {
+          body: { action: 'health-check' }
+        });
+        console.log('[Registration] Health check result:', healthCheck);
+        
+        if (healthCheck.error) {
+          console.error('[Registration] Health check failed:', healthCheck.error);
+        }
+        
         console.log('[Registration] ========== CALLING DRGREEN-PROXY ==========');
         console.log('[Registration] Action: create-client-legacy');
-        console.log('[Registration] Timestamp:', new Date().toISOString());
         
         const { data: result, error } = await supabase.functions.invoke('drgreen-proxy', {
           body: {
@@ -560,6 +596,14 @@ export function ClientOnboarding() {
           });
         }
       } catch (apiError: any) {
+        console.error('[Registration] ========== API CALL FAILED ==========');
+        console.error('[Registration] Error type:', typeof apiError);
+        console.error('[Registration] Error name:', apiError?.name);
+        console.error('[Registration] Error message:', apiError?.message);
+        console.error('[Registration] Error status:', apiError?.status);
+        console.error('[Registration] Error stack:', apiError?.stack);
+        console.error('[Registration] Full error object:', JSON.stringify(apiError, Object.getOwnPropertyNames(apiError), 2));
+        
         // Check for 422 error in catch block
         if (apiError?.status === 422 || apiError?.message?.includes('Unprocessable')) {
           clearInterval(progressInterval);
@@ -570,8 +614,14 @@ export function ClientOnboarding() {
           return;
         }
         // Edge function failed - continue with local client ID
-        console.warn('Dr Green API unavailable, using local client ID:', apiError);
-        logEvent('registration.error', 'pending', { error: 'api_unavailable' });
+        console.warn('[Registration] Dr Green API unavailable, using local client ID');
+        logEvent('registration.error', 'pending', { error: 'api_unavailable', errorMessage: apiError?.message });
+        
+        // Show user feedback about fallback
+        toast({
+          title: 'Registration saved locally',
+          description: 'We saved your details but could not connect to the verification service. Our team will contact you.',
+        });
       }
 
       clearInterval(progressInterval);

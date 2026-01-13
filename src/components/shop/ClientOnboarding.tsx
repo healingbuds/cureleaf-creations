@@ -5,6 +5,12 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { buildLegacyClientPayload } from '@/lib/drgreenApi';
+import { 
+  isMockModeEnabled, 
+  createMockClientResponse, 
+  simulateApiDelay,
+  getMockModeStatus 
+} from '@/lib/mockMode';
 import {
   User,
   MapPin,
@@ -523,95 +529,135 @@ export function ClientOnboarding() {
       console.log('[Registration] Legacy payload built:', JSON.stringify(legacyPayload, null, 2));
       console.log('[Registration] Has clientBusiness:', !!legacyPayload.clientBusiness);
 
+      // Check if mock mode is enabled
+      const mockStatus = getMockModeStatus();
+      if (mockStatus.enabled) {
+        console.log('[Registration] 🎭 MOCK MODE ENABLED via', mockStatus.source);
+      }
+
       // Try to call edge function to create client (non-blocking)
       try {
-        console.log('[Registration] ========== PRE-REQUEST DIAGNOSTICS ==========');
-        console.log('[Registration] Timestamp:', new Date().toISOString());
-        console.log('[Registration] Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
-        console.log('[Registration] User ID:', user.id);
-        
-        // Verify session is still valid
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        console.log('[Registration] Session check:', { 
-          hasSession: !!session, 
-          error: sessionError?.message,
-          expiresAt: session?.expires_at,
-          tokenLength: session?.access_token?.length 
-        });
-        
-        if (!session) {
-          console.error('[Registration] No valid session - user may need to re-authenticate');
-          toast({
-            title: 'Session expired',
-            description: 'Please sign in again to complete registration.',
-            variant: 'destructive',
+        // === MOCK MODE: Simulate successful API response ===
+        if (isMockModeEnabled()) {
+          console.log('[Registration] 🎭 ========== MOCK MODE ACTIVE ==========');
+          console.log('[Registration] 🎭 Simulating API call with delay...');
+          
+          await simulateApiDelay(800, 1500);
+          
+          const mockResponse = createMockClientResponse({
+            email: formData.personal?.email || '',
+            firstName: formData.personal?.firstName || '',
+            lastName: formData.personal?.lastName || '',
+            countryCode: formData.address?.country || 'PT',
           });
-          setIsSubmitting(false);
-          clearInterval(progressInterval);
-          return;
-        }
-        
-        // Quick health check to verify edge function is reachable
-        console.log('[Registration] Running health check...');
-        const healthCheck = await supabase.functions.invoke('drgreen-proxy', {
-          body: { action: 'health-check' }
-        });
-        console.log('[Registration] Health check result:', healthCheck);
-        
-        if (healthCheck.error) {
-          console.error('[Registration] Health check failed:', healthCheck.error);
-        }
-        
-        console.log('[Registration] ========== CALLING DRGREEN-PROXY ==========');
-        console.log('[Registration] Action: create-client-legacy');
-        
-        const { data: result, error } = await supabase.functions.invoke('drgreen-proxy', {
-          body: {
-            action: 'create-client-legacy',
-            payload: legacyPayload,
-          },
-        });
-        
-        console.log('[Registration] ========== EDGE FUNCTION RESPONSE ==========');
-        console.log('[Registration] Result:', JSON.stringify(result, null, 2));
-        console.log('[Registration] Error:', error ? JSON.stringify(error, null, 2) : 'none');
-        console.log('[Registration] Result type:', typeof result);
-        console.log('[Registration] Has clientId:', !!result?.clientId);
-        console.log('[Registration] Has kycLink:', !!result?.kycLink);
-
-        // Handle 422 Unprocessable Entity (e.g., blurry ID)
-        if (error) {
-          const errorData = error as any;
-          if (errorData?.context?.status === 422 || result?.errorCode === 'DOCUMENT_QUALITY') {
-            clearInterval(progressInterval);
-            setKycStatus('error');
-            setDocumentError('document_quality');
+          
+          console.log('[Registration] 🎭 Mock response:', mockResponse);
+          
+          clientId = mockResponse.clientId;
+          kycLink = mockResponse.kycLink;
+          apiSuccess = true;
+          
+          logEvent('registration.success', clientId, { 
+            hasKycLink: true, 
+            countryCode: formData.address?.country,
+            mockMode: true 
+          });
+          
+          toast({
+            title: '🎭 Mock Mode Active',
+            description: 'Registration simulated successfully. This is test mode.',
+          });
+          
+        } else {
+          // === LIVE MODE: Call real API ===
+          console.log('[Registration] ========== PRE-REQUEST DIAGNOSTICS ==========');
+          console.log('[Registration] Timestamp:', new Date().toISOString());
+          console.log('[Registration] Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+          console.log('[Registration] User ID:', user.id);
+          
+          // Verify session is still valid
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+          console.log('[Registration] Session check:', { 
+            hasSession: !!session, 
+            error: sessionError?.message,
+            expiresAt: session?.expires_at,
+            tokenLength: session?.access_token?.length 
+          });
+          
+          if (!session) {
+            console.error('[Registration] No valid session - user may need to re-authenticate');
+            toast({
+              title: 'Session expired',
+              description: 'Please sign in again to complete registration.',
+              variant: 'destructive',
+            });
             setIsSubmitting(false);
+            clearInterval(progressInterval);
             return;
           }
-        }
-
-        if (!error && result?.clientId) {
-          clientId = result.clientId;
-          kycLink = result.kycLink || null;
-          apiSuccess = true;
-          logEvent('registration.success', clientId, { hasKycLink: !!kycLink, countryCode: formData.address?.country });
-          if (kycLink) {
-            logEvent('kyc.link_received', clientId, { linkPresent: true });
+          
+          // Quick health check to verify edge function is reachable
+          console.log('[Registration] Running health check...');
+          const healthCheck = await supabase.functions.invoke('drgreen-proxy', {
+            body: { action: 'health-check' }
+          });
+          console.log('[Registration] Health check result:', healthCheck);
+          
+          if (healthCheck.error) {
+            console.error('[Registration] Health check failed:', healthCheck.error);
           }
-        }
-        
-        // Check for API-level errors in the result (even without JS error)
-        if (result?.error || result?.statusCode >= 400) {
-          console.warn('[Registration] Dr Green API returned error:', {
-            error: result?.error,
-            statusCode: result?.statusCode,
-            message: result?.message,
+          
+          console.log('[Registration] ========== CALLING DRGREEN-PROXY ==========');
+          console.log('[Registration] Action: create-client-legacy');
+          
+          const { data: result, error } = await supabase.functions.invoke('drgreen-proxy', {
+            body: {
+              action: 'create-client-legacy',
+              payload: legacyPayload,
+            },
           });
-          logEvent('registration.api_error', 'pending', { 
-            error: result?.error || 'Unknown',
-            statusCode: result?.statusCode,
-          });
+          
+          console.log('[Registration] ========== EDGE FUNCTION RESPONSE ==========');
+          console.log('[Registration] Result:', JSON.stringify(result, null, 2));
+          console.log('[Registration] Error:', error ? JSON.stringify(error, null, 2) : 'none');
+          console.log('[Registration] Result type:', typeof result);
+          console.log('[Registration] Has clientId:', !!result?.clientId);
+          console.log('[Registration] Has kycLink:', !!result?.kycLink);
+
+          // Handle 422 Unprocessable Entity (e.g., blurry ID)
+          if (error) {
+            const errorData = error as any;
+            if (errorData?.context?.status === 422 || result?.errorCode === 'DOCUMENT_QUALITY') {
+              clearInterval(progressInterval);
+              setKycStatus('error');
+              setDocumentError('document_quality');
+              setIsSubmitting(false);
+              return;
+            }
+          }
+
+          if (!error && result?.clientId) {
+            clientId = result.clientId;
+            kycLink = result.kycLink || null;
+            apiSuccess = true;
+            logEvent('registration.success', clientId, { hasKycLink: !!kycLink, countryCode: formData.address?.country });
+            if (kycLink) {
+              logEvent('kyc.link_received', clientId, { linkPresent: true });
+            }
+          }
+          
+          // Check for API-level errors in the result (even without JS error)
+          if (result?.error || result?.statusCode >= 400) {
+            console.warn('[Registration] Dr Green API returned error:', {
+              error: result?.error,
+              statusCode: result?.statusCode,
+              message: result?.message,
+            });
+            logEvent('registration.api_error', 'pending', { 
+              error: result?.error || 'Unknown',
+              statusCode: result?.statusCode,
+            });
+          }
         }
       } catch (apiError: any) {
         console.error('[Registration] ========== API CALL FAILED ==========');

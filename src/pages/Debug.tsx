@@ -5,9 +5,16 @@ import SEOHead from '@/components/SEOHead';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, CheckCircle2, XCircle, RefreshCw, Shield, FileText, Building2, Wifi, Database, User, Download, Leaf, ShoppingCart, Package, UserPlus } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { AlertTriangle, CheckCircle2, XCircle, RefreshCw, Shield, FileText, Building2, Wifi, Database, User, Download, Leaf, ShoppingCart, Package, UserPlus, Beaker } from 'lucide-react';
 import { buildLegacyClientPayload } from '@/lib/drgreenApi';
 import { supabase } from '@/integrations/supabase/client';
+import { 
+  isMockModeEnabled, 
+  enableMockMode, 
+  disableMockMode, 
+  getMockModeStatus 
+} from '@/lib/mockMode';
 interface TestResult {
   name: string;
   description: string;
@@ -101,6 +108,17 @@ export default function Debug() {
   
   const [isRunning, setIsRunning] = useState(false);
   const [hasFailures, setHasFailures] = useState(false);
+  const [mockModeActive, setMockModeActive] = useState(isMockModeEnabled());
+
+  // Handle mock mode toggle
+  const handleMockModeToggle = (enabled: boolean) => {
+    if (enabled) {
+      enableMockMode();
+    } else {
+      disableMockMode();
+    }
+    setMockModeActive(enabled);
+  };
 
   const updateTest = (index: number, update: Partial<TestResult>) => {
     setTests(prev => {
@@ -1068,7 +1086,65 @@ export default function Debug() {
               </Button>
             </div>
 
-            {/* Test Results */}
+            {/* Mock Mode Panel */}
+            <Card className={`mb-6 ${mockModeActive ? 'border-amber-500 bg-amber-500/10' : 'border-muted'}`}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${mockModeActive ? 'bg-amber-500/20' : 'bg-muted'}`}>
+                      <Beaker className={`h-5 w-5 ${mockModeActive ? 'text-amber-600' : 'text-muted-foreground'}`} />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        Mock Mode
+                        {mockModeActive && (
+                          <Badge variant="outline" className="border-amber-500 text-amber-600 bg-amber-500/10">
+                            ACTIVE
+                          </Badge>
+                        )}
+                      </CardTitle>
+                      <CardDescription>
+                        Simulate Dr. Green API responses for testing the registration flow
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={mockModeActive}
+                    onCheckedChange={handleMockModeToggle}
+                  />
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="text-sm space-y-2">
+                  {mockModeActive ? (
+                    <>
+                      <p className="text-amber-700 dark:text-amber-400">
+                        🎭 <strong>Mock mode is enabled.</strong> Client registration will simulate successful API responses.
+                      </p>
+                      <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-4">
+                        <li>Client creation returns a mock <code className="text-xs bg-muted px-1 py-0.5 rounded">mock-*</code> ID</li>
+                        <li>KYC link is simulated (won't work for actual verification)</li>
+                        <li>All form data is still saved to the local database</li>
+                        <li>Emails are still sent (welcome + KYC reminder)</li>
+                      </ul>
+                    </>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      Enable mock mode to test the full registration UI/UX without requiring live API permissions.
+                      Useful when Dr. Green API credentials are read-only.
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-3 pt-3 border-t">
+                    <strong>Console commands:</strong>{' '}
+                    <code className="bg-muted px-1 py-0.5 rounded">mockMode.enable()</code>,{' '}
+                    <code className="bg-muted px-1 py-0.5 rounded">mockMode.disable()</code>,{' '}
+                    <code className="bg-muted px-1 py-0.5 rounded">mockMode.status()</code>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+
             <div className="space-y-4">
               {tests.map((test, index) => (
                 <Card
